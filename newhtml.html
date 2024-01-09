@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation</title>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+
+        .error-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .error-container .error {
+            margin-left: 10px;
+        }
+
+        .gender-container {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="text-center">Date and Time</h1>
+    <p id="datetime" class="text-center"></p>
+
+    <h2 class="text-center">Enter Your Personal Information For Validation</h2>
+    <form id="myForm" onsubmit="return validateForm()">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <div class="error-container">
+                <input type="text" id="name" name="name" class="form-control" required>
+                <span class="error" id="nameError"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <div class="error-container">
+                <input type="number" id="age" name="age" class="form-control" required>
+                <span class="error" id="ageError"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Gender:</label>
+            <div class="gender-container error-container">
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male">Male</label>
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">Female</label>
+                <span class="error" id="genderError"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Validate</button>
+    </form>
+
+    <h2 class="text-center"></h2>
+    <textarea id="userDataAndRentingStatus" readonly class="form-control"></textarea>
+
+   
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+         function validateForm() {
+           
+           var name = document.getElementById('name').value;
+           var age = document.getElementById('age').value;
+           var gender = document.querySelector('input[name="gender"]:checked');
+
+           
+           resetErrors();
+
+           // Check if fields are not empty
+           if (name === '' || /\d/.test(name)) {
+               displayError('name', 'Enter a valid name');
+               return false;
+           }
+
+           if (age === '' || isNaN(age) || age <= 0) {
+               displayError('age', 'Enter a valid age');
+               return false;
+           }
+
+           if (!gender) {
+               displayError('gender', 'Select a gender');
+               return false;
+           }
+
+           // Display user data and renting status if validation passes
+           var userDataAndRentingStatus = 'Name: "' + name + '"\n';
+           userDataAndRentingStatus += 'Age: "' + age + '"\n';
+           userDataAndRentingStatus += 'Gender: "' + gender.value + '"\n\n';
+
+           // Display renting status based on age
+           userDataAndRentingStatus += 'Renting Status: ';
+           userDataAndRentingStatus += (parseInt(age) > 25) ? "Customer validated to rent above age : 25" : 'Couldnt validate user to rent under age : 25';
+
+           document.getElementById('userDataAndRentingStatus').value = userDataAndRentingStatus;
+
+           //  to prevent the form from actually submitting
+           return false;
+       }
+
+       function resetErrors() {
+           var errors = document.querySelectorAll('.error');
+           errors.forEach(function (error) {
+               error.textContent = '';
+           });
+       }
+
+       function displayError(fieldName, errorMessage) {
+           var errorElement = document.getElementById(fieldName + 'Error');
+           if (errorElement) {
+               errorElement.textContent = errorMessage;
+           }
+       }
+
+       // Display date and time
+       function updateDateTime() {
+           var now = new Date();
+           var dateTimeString = 'Current Date and Time: ' + now.toLocaleString();
+           document.getElementById('datetime').textContent = dateTimeString;
+       }
+
+       // Update date and time on page load
+       updateDateTime();
+
+       // Update date and time every second
+       setInterval(updateDateTime, 1000);
+    </script>
+</body>
+
+</html>
